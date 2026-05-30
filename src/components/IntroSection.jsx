@@ -9,7 +9,7 @@ export default function IntroSection() {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      paddingTop: '120px', // space for navbar
+      paddingTop: '100px', // space for navbar
       background: '#F5F5F3',
     }}>
       {/* Title above image */}
@@ -19,11 +19,12 @@ export default function IntroSection() {
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         style={{
           fontFamily: "'Cormorant Garamond', serif",
-          fontWeight: 300,
+          fontWeight: 400,
           fontSize: 'clamp(3rem, 6vw, 6rem)',
           letterSpacing: '0.1em',
-          color: '#1A1A18',
+          color: '#111111',
           textTransform: 'uppercase',
+          textShadow: '0 1px 2px rgba(0,0,0,0.04)',
           textAlign: 'center',
           marginBottom: '2rem',
         }}

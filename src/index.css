@@ -58,3 +58,16 @@ html.lenis, html.lenis body {
 /* ─── Utility ───────────────────────────────────── */
 .will-change-transform { will-change: transform; }
 .will-change-opacity   { will-change: opacity; }
+
+/* ─── Hero Canvas Performance ───────────────────── */
+canvas {
+  will-change: contents;
+  image-rendering: auto;
+}
+
+/* Smooth panel transitions */
+.hero-panel {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

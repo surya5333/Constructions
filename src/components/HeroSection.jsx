@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -59,17 +59,55 @@ const PHASES = [
   },
 ]
 
+// ── Phase-based dynamic scales — creates construction momentum ──────────────
+const PHASE_SCALES = [1.15, 1.2, 1.22, 1.25, 1.10, 1
+]
+
 // ── Frame path helper ───────────────────────────────────────────────────────
 function framePath(n) {
   return `/frames/ezgif-frame-${String(n).padStart(3, '0')}.jpg`
 }
 
-// ── Text animation variants ─────────────────────────────────────────────────
-const textVariants = {
-  hidden:  { opacity: 0, y: 18 },
+// ── Smooth interpolation helper ─────────────────────────────────────────────
+function lerp(a, b, t) {
+  return a + (b - a) * Math.max(0, Math.min(1, t))
+}
+
+// ── Get interpolated scale for a given frame ────────────────────────────────
+function getScaleForFrame(frameIndex) {
+  const frame1 = frameIndex + 1
+  const phaseIdx = PHASES.findIndex(
+    (p) => frame1 >= p.startFrame && frame1 <= p.endFrame
+  )
+  if (phaseIdx === -1) return PHASE_SCALES[0]
+
+  const phase = PHASES[phaseIdx]
+  const phaseProgress = (frame1 - phase.startFrame) / (phase.endFrame - phase.startFrame)
+  const currentScale = PHASE_SCALES[phaseIdx]
+  const nextScale = PHASE_SCALES[Math.min(phaseIdx + 1, PHASE_SCALES.length - 1)]
+
+  // Smoothly interpolate toward the next phase's scale
+  return lerp(currentScale, nextScale, phaseProgress)
+}
+
+// ── Text animation variants — layered timing for sophistication ─────────────
+const labelVariants = {
+  hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1, y: 0,
-    transition: { duration: 0.75, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94], delay: 0 },
+  },
+  exit: {
+    opacity: 0, y: -6,
+    transition: { duration: 0.3, ease: [0.55, 0, 1, 0.45] },
+  },
+}
+
+const textVariants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: {
+    opacity: 1, y: 0,
+    transition: { duration: 0.75, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.12 },
   },
   exit: {
     opacity: 0, y: -12,
@@ -78,10 +116,10 @@ const textVariants = {
 }
 
 const subtitleVariants = {
-  hidden:  { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 10 },
   visible: {
     opacity: 1, y: 0,
-    transition: { duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.12 },
+    transition: { duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.25 },
   },
   exit: {
     opacity: 0, y: -8,
@@ -101,8 +139,9 @@ export default function HeroSection() {
   const [currentFrame,   setCurrentFrame]   = useState(0)
   const [currentPhase,   setCurrentPhase]   = useState(0)
   const [loadProgress,   setLoadProgress]   = useState(0)
-  const [allLoaded,      setAllLoaded]       = useState(false)
+  const [allLoaded,      setAllLoaded]      = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [hasEntered,     setHasEntered]     = useState(false)
 
   // ── 1. Preload all frames ──────────────────────────────────────────────
   useEffect(() => {
@@ -122,7 +161,15 @@ export default function HeroSection() {
     imagesRef.current = images
   }, [])
 
-  // ── 2. Canvas draw ─────────────────────────────────────────────────────
+  // Trigger entrance animation after load
+  useEffect(() => {
+    if (allLoaded) {
+      const timer = setTimeout(() => setHasEntered(true), 100)
+      return () => clearTimeout(timer)
+    }
+  }, [allLoaded])
+
+  // ── 2. Canvas draw — phase-aware scaling, contrast boost, zoom settle ──
   const drawFrame = useCallback((index) => {
     const canvas = canvasRef.current
     const ctx    = ctxRef.current
@@ -136,15 +183,45 @@ export default function HeroSection() {
     const iw = img.naturalWidth
     const ih = img.naturalHeight
 
-    // contain-fit — keeps sketch fully visible and centered
-    const scale = Math.min(cw / iw, ch / ih)
+    // Phase-aware dynamic scale
+    let dynamicScale = getScaleForFrame(index)
+
+    // Final zoom settle: subtle micro-scale increase for last 15 frames
+    const frame1 = index + 1
+    if (frame1 >= 104) {
+      const settleProgress = (frame1 - 104) / (TOTAL_FRAMES - 104)
+      const settleEased = 1 - Math.pow(1 - settleProgress, 3) // ease-out cubic
+      dynamicScale *= lerp(1.0, 1.03, settleEased)
+    }
+
+    // Contain-fit with dynamic scale
+    const baseScale = Math.min(cw / iw, ch / ih)
+    const scale = baseScale * dynamicScale
     const dw = iw * scale
     const dh = ih * scale
     const dx = (cw - dw) / 2
-    const dy = (ch - dh) / 2
+    // Shift slightly upward to reduce dead space above building
+    const dy = (ch - dh) / 2 - ch * 0.02
+
+    // Contrast boost for final frames (100–118)
+    if (frame1 >= 100) {
+      const boostProgress = (frame1 - 100) / (TOTAL_FRAMES - 100)
+      const contrastVal = lerp(1.0, 1.12, boostProgress)
+      const brightnessVal = lerp(1.0, 0.97, boostProgress)
+      ctx.filter = `contrast(${contrastVal}) brightness(${brightnessVal})`
+    } else {
+      ctx.filter = 'none'
+    }
+
+    // High quality rendering
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
 
     ctx.clearRect(0, 0, cw, ch)
     ctx.drawImage(img, dx, dy, dw, dh)
+
+    // Reset filter
+    ctx.filter = 'none'
   }, [])
 
   // ── 3. Resize canvas ───────────────────────────────────────────────────
@@ -167,7 +244,7 @@ export default function HeroSection() {
     return () => window.removeEventListener('resize', resize)
   }, [drawFrame])
 
-  // ── 4. Smooth frame lerp loop ──────────────────────────────────────────
+  // ── 4. Smooth frame lerp loop — dynamic slowdown near completion ───────
   useEffect(() => {
     if (!allLoaded) return
 
@@ -175,7 +252,22 @@ export default function HeroSection() {
     let current = 0
 
     const loop = () => {
-      current += (target - current) * 0.04
+      // Dynamic lerp: slower near end for cinematic settle
+      const progress = current / (TOTAL_FRAMES - 1)
+      let lerpFactor
+      if (progress > 0.85) {
+        // Last 15%: luxury slowdown, easing from 0.06 → 0.018
+        const slowProgress = (progress - 0.85) / 0.15
+        lerpFactor = lerp(0.06, 0.018, slowProgress)
+      } else if (progress > 0.7) {
+        // Transition zone: start slowing
+        const transProgress = (progress - 0.7) / 0.15
+        lerpFactor = lerp(0.06, 0.06, transProgress)
+      } else {
+        lerpFactor = 0.06
+      }
+
+      current += (target - current) * lerpFactor
       const rounded = Math.round(current)
 
       if (rounded !== frameIndexRef.current) {
@@ -221,6 +313,15 @@ export default function HeroSection() {
     if (!p) return 0
     return (currentFrame + 1 - p.startFrame) / (p.endFrame - p.startFrame)
   })()
+
+  // Is this the final COMPLETE phase?
+  const isComplete = currentPhase === 5
+
+  // Vignette opacity — fades in during COMPLETE phase
+  const vignetteOpacity = useMemo(() => {
+    if (scrollProgress < 0.8) return 0
+    return Math.min((scrollProgress - 0.8) / 0.15, 1) * 0.6
+  }, [scrollProgress])
 
   return (
     <>
@@ -314,25 +415,30 @@ export default function HeroSection() {
             width: '100%',
             background: '#F5F5F3',
             display: 'grid',
-            gridTemplateColumns: '220px 1fr 280px',
+            gridTemplateColumns: '180px 1fr 240px',
             overflow: 'hidden',
           }}
         >
 
           {/* ── LEFT — Vertical Timeline ─────────────────────────── */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            padding: '0 0 0 3.5rem',
-            gap: '0',
-            position: 'relative',
-          }}>
+          <motion.div
+            initial={{ opacity: 0, x: -12 }}
+            animate={hasEntered ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 1.0, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.3 }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+              padding: '0 0 0 2.8rem',
+              gap: '0',
+              position: 'relative',
+            }}
+          >
             {/* Vertical dotted line */}
             <div style={{
               position: 'absolute',
-              left: '3.5rem',
+              left: '2.8rem',
               top: '50%',
               transform: 'translateY(-50%)',
               width: '1px',
@@ -343,7 +449,7 @@ export default function HeroSection() {
             {/* Progress fill */}
             <div style={{
               position: 'absolute',
-              left: '3.5rem',
+              left: '2.8rem',
               top: '50%',
               transform: 'translateY(-50%)',
               width: '1px',
@@ -373,7 +479,7 @@ export default function HeroSection() {
                       alignItems: 'center',
                       gap: '0.75rem',
                       transition: 'opacity 0.4s ease',
-                      opacity: isActive ? 1 : isDone ? 0.45 : 0.25,
+                      opacity: isActive ? 1 : isDone ? 0.55 : 0.4,
                     }}
                   >
                     {/* Dot */}
@@ -381,7 +487,7 @@ export default function HeroSection() {
                       width:  isActive ? '6px' : '4px',
                       height: isActive ? '6px' : '4px',
                       borderRadius: '50%',
-                      background: isActive ? '#1A1A18' : isDone ? '#8A8A85' : '#C8C8C2',
+                      background: isActive ? '#1A1A18' : isDone ? '#777773' : '#A8A8A2',
                       transition: 'all 0.4s ease',
                       flexShrink: 0,
                       marginLeft: isActive ? '-1px' : '0',
@@ -392,7 +498,7 @@ export default function HeroSection() {
                         fontWeight: isActive ? 400 : 300,
                         fontSize: '0.58rem',
                         letterSpacing: '0.28em',
-                        color: isActive ? '#1A1A18' : '#8A8A85',
+                        color: isActive ? '#1A1A18' : isDone ? '#777773' : '#8A8A85',
                         textTransform: 'uppercase',
                         lineHeight: 1.2,
                         transition: 'all 0.4s ease',
@@ -409,27 +515,32 @@ export default function HeroSection() {
             <div style={{
               position: 'absolute',
               bottom: '3.5rem',
-              left: '3.5rem',
+              left: '2.8rem',
             }}>
               <span style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 200,
                 fontSize: '0.58rem',
                 letterSpacing: '0.2em',
-                color: '#C8C8C2',
+                color: '#A8A8A2',
               }}>
                 {String(currentFrame + 1).padStart(3, '0')} / {String(TOTAL_FRAMES).padStart(3, '0')}
               </span>
             </div>
-          </div>
+          </motion.div>
 
           {/* ── CENTER — Canvas ──────────────────────────────────── */}
-          <div style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={hasEntered ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94], delay: 0 }}
+            style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <canvas
               ref={canvasRef}
               style={{
@@ -440,13 +551,24 @@ export default function HeroSection() {
               }}
             />
 
+            {/* Cinematic vignette — fades in during COMPLETE phase */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                boxShadow: `inset 0 0 120px 40px rgba(0,0,0,${vignetteOpacity * 0.12}), inset 0 0 60px 20px rgba(0,0,0,${vignetteOpacity * 0.06})`,
+                transition: 'box-shadow 0.6s ease',
+              }}
+            />
+
             {/* Scroll hint — fades after scrolling */}
             <AnimatePresence>
               {scrollProgress < 0.02 && allLoaded && (
                 <motion.div
                   key="scroll-hint"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { delay: 1, duration: 0.8 } }}
+                  animate={{ opacity: 1, transition: { delay: 1.5, duration: 0.8 } }}
                   exit={{ opacity: 0, transition: { duration: 0.5 } }}
                   style={{
                     position: 'absolute',
@@ -501,22 +623,27 @@ export default function HeroSection() {
                 transition={{ duration: 0.05, ease: 'linear' }}
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* ── RIGHT — Typography Panel ─────────────────────────── */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            padding: '0 3.5rem 0 2rem',
-            gap: '0',
-          }}>
+          <motion.div
+            initial={{ opacity: 0, x: 12 }}
+            animate={hasEntered ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 1.0, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.5 }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '0 3rem 0 1.5rem',
+              gap: '0',
+            }}
+          >
 
             {/* Phase label */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`label-${currentPhase}`}
-                variants={subtitleVariants}
+                variants={labelVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
@@ -525,7 +652,7 @@ export default function HeroSection() {
                   fontWeight: 300,
                   fontSize: '0.6rem',
                   letterSpacing: '0.38em',
-                  color: '#8A8A85',
+                  color: '#777773',
                   textTransform: 'uppercase',
                   marginBottom: '1.2rem',
                   display: 'flex',
@@ -537,7 +664,7 @@ export default function HeroSection() {
                   display: 'inline-block',
                   width: '24px',
                   height: '1px',
-                  background: '#C8C8C2',
+                  background: '#A8A8A2',
                 }} />
                 Phase {phase?.id}
               </motion.div>
@@ -554,12 +681,13 @@ export default function HeroSection() {
                   exit="exit"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontWeight: 300,
+                    fontWeight: isComplete ? 400 : 300,
                     fontSize: 'clamp(1.9rem, 2.6vw, 2.8rem)',
                     lineHeight: 1.18,
                     letterSpacing: '-0.01em',
-                    color: '#1A1A18',
+                    color: '#111111',
                     margin: 0,
+                    transition: 'font-weight 0.6s ease',
                   }}
                 >
                   {phase?.headline}
@@ -571,7 +699,7 @@ export default function HeroSection() {
             <div style={{
               width: '32px',
               height: '1px',
-              background: 'rgba(26,26,24,0.2)',
+              background: 'rgba(26,26,24,0.25)',
               marginBottom: '1.4rem',
             }} />
 
@@ -588,9 +716,10 @@ export default function HeroSection() {
                   fontWeight: 300,
                   fontSize: '0.82rem',
                   lineHeight: 1.75,
-                  color: '#8A8A85',
+                  color: isComplete ? '#555555' : '#666662',
                   letterSpacing: '0.02em',
                   maxWidth: '220px',
+                  transition: 'color 0.6s ease',
                 }}
               >
                 {phase?.subtitle}
@@ -626,7 +755,7 @@ export default function HeroSection() {
                   fontWeight: 200,
                   fontSize: '0.55rem',
                   letterSpacing: '0.22em',
-                  color: '#C8C8C2',
+                  color: '#A8A8A2',
                   textTransform: 'uppercase',
                 }}>
                   Phase {phase?.id} / 06
@@ -636,7 +765,7 @@ export default function HeroSection() {
                   fontWeight: 200,
                   fontSize: '0.55rem',
                   letterSpacing: '0.22em',
-                  color: '#C8C8C2',
+                  color: '#A8A8A2',
                 }}>
                   {Math.round(scrollProgress * 100)}%
                 </span>
@@ -656,14 +785,14 @@ export default function HeroSection() {
                     href="#contact"
                     style={{
                       fontFamily: "'Inter', sans-serif",
-                      fontWeight: 300,
-                      fontSize: '0.62rem',
+                      fontWeight: 400,
+                      fontSize: '0.65rem',
                       letterSpacing: '0.28em',
-                      color: '#1A1A18',
+                      color: '#111111',
                       textDecoration: 'none',
                       textTransform: 'uppercase',
-                      borderBottom: '1px solid rgba(26,26,24,0.3)',
-                      paddingBottom: '2px',
+                      borderBottom: '1px solid rgba(26,26,24,0.4)',
+                      paddingBottom: '3px',
                       display: 'inline-block',
                       transition: 'opacity 0.3s ease',
                     }}
@@ -675,7 +804,7 @@ export default function HeroSection() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
       </section>
     </>
