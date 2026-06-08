@@ -65,7 +65,7 @@ const PHASE_SCALES = [1.15, 1.2, 1.22, 1.25, 1.10, 1
 
 // ── Frame path helper ───────────────────────────────────────────────────────
 function framePath(n) {
-  return `/frames/ezgif-frame-${String(n).padStart(3, '0')}.jpg`
+  return `/frames3/ezgif-frame-${String(n).padStart(3, '0')}.jpg`
 }
 
 // ── Smooth interpolation helper ─────────────────────────────────────────────
@@ -128,20 +128,20 @@ const subtitleVariants = {
 }
 
 export default function HeroSection() {
-  const sectionRef    = useRef(null)
-  const stickyRef     = useRef(null)
-  const canvasRef     = useRef(null)
-  const imagesRef     = useRef([])
+  const sectionRef = useRef(null)
+  const stickyRef = useRef(null)
+  const canvasRef = useRef(null)
+  const imagesRef = useRef([])
   const frameIndexRef = useRef(0)
-  const rafRef        = useRef(null)
-  const ctxRef        = useRef(null)
+  const rafRef = useRef(null)
+  const ctxRef = useRef(null)
 
-  const [currentFrame,   setCurrentFrame]   = useState(0)
-  const [currentPhase,   setCurrentPhase]   = useState(0)
-  const [loadProgress,   setLoadProgress]   = useState(0)
-  const [allLoaded,      setAllLoaded]      = useState(false)
+  const [currentFrame, setCurrentFrame] = useState(0)
+  const [currentPhase, setCurrentPhase] = useState(0)
+  const [loadProgress, setLoadProgress] = useState(0)
+  const [allLoaded, setAllLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [hasEntered,     setHasEntered]     = useState(false)
+  const [hasEntered, setHasEntered] = useState(false)
 
   // ── 1. Preload all frames ──────────────────────────────────────────────
   useEffect(() => {
@@ -172,7 +172,7 @@ export default function HeroSection() {
   // ── 2. Canvas draw — phase-aware scaling, contrast boost, zoom settle ──
   const drawFrame = useCallback((index) => {
     const canvas = canvasRef.current
-    const ctx    = ctxRef.current
+    const ctx = ctxRef.current
     if (!canvas || !ctx) return
 
     const img = imagesRef.current[index]
@@ -234,7 +234,7 @@ export default function HeroSection() {
     const resize = () => {
       const sticky = stickyRef.current
       if (!sticky) return
-      canvas.width  = sticky.clientWidth
+      canvas.width = sticky.clientWidth
       canvas.height = sticky.clientHeight
       drawFrame(frameIndexRef.current)
     }
@@ -470,7 +470,7 @@ export default function HeroSection() {
             }}>
               {PHASES.map((p, i) => {
                 const isActive = i === currentPhase
-                const isDone   = i < currentPhase
+                const isDone = i < currentPhase
                 return (
                   <div
                     key={p.id}
@@ -484,7 +484,7 @@ export default function HeroSection() {
                   >
                     {/* Dot */}
                     <div style={{
-                      width:  isActive ? '6px' : '4px',
+                      width: isActive ? '6px' : '4px',
                       height: isActive ? '6px' : '4px',
                       borderRadius: '50%',
                       background: isActive ? '#1A1A18' : isDone ? '#777773' : '#A8A8A2',
@@ -738,8 +738,8 @@ export default function HeroSection() {
                       background: i < currentPhase
                         ? '#1A1A18'
                         : i === currentPhase
-                        ? `linear-gradient(to right, #1A1A18 ${phaseProgress * 100}%, rgba(26,26,24,0.15) ${phaseProgress * 100}%)`
-                        : 'rgba(26,26,24,0.12)',
+                          ? `linear-gradient(to right, #1A1A18 ${phaseProgress * 100}%, rgba(26,26,24,0.15) ${phaseProgress * 100}%)`
+                          : 'rgba(26,26,24,0.12)',
                       transition: 'background 0.3s ease',
                     }}
                   />

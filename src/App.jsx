@@ -1,10 +1,8 @@
 import { useEffect, useRef } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Lenis from 'lenis'
-import Navbar from './components/Navbar'
-import IntroSection from './components/IntroSection'
-import HeroSection from './components/HeroSection'
-import StatsSection from './components/StatsSection'
-import FooterSection from './components/FooterSection'
+import Home from './pages/Home'
+import Services from './pages/Services'
 
 export default function App() {
   const lenisRef = useRef(null)
@@ -21,7 +19,6 @@ export default function App() {
     })
     lenisRef.current = lenis
 
-    // Sync Lenis with GSAP ticker (if GSAP is used)
     let rafId
     function raf(time) {
       lenis.raf(time)
@@ -36,12 +33,13 @@ export default function App() {
   }, [])
 
   return (
-    <div style={{ background: '#F5F5F3' }}>
-      <Navbar />
-      <IntroSection />
-      <HeroSection />
-      <StatsSection />
-      <FooterSection />
-    </div>
+    <BrowserRouter>
+      <div style={{ background: '#F5F5F3', minHeight: '100vh' }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }
