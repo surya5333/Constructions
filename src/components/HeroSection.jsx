@@ -60,7 +60,7 @@ const PHASES = [
 ]
 
 // ── Phase-based dynamic scales — creates construction momentum ──────────────
-const PHASE_SCALES = [1.15, 1.2, 1.22, 1.25, 1.10, 1
+const PHASE_SCALES = [1.15, 1.2, 1.22, 1.25, 1.23  , 1.17
 ]
 
 // ── Frame path helper ───────────────────────────────────────────────────────
@@ -782,7 +782,7 @@ export default function HeroSection() {
                   style={{ marginTop: '2rem' }}
                 >
                   <a
-                    href="#contact"
+                    href="/inquiry"
                     style={{
                       fontFamily: "'Inter', sans-serif",
                       fontWeight: 400,

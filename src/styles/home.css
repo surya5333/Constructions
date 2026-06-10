@@ -1,0 +1,32 @@
+/* Home page specific styles */
+@theme {
+  --bg:        #F5F5F3;
+  --ink:       #1A1A18;
+  --ink-mid:   #3D3D3A;
+  --ink-muted: #8A8A85;
+  --ink-ghost: #C8C8C2;
+  --accent:    #2C2C2A;
+  --line:      rgba(26,26,24,0.12);
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
+  --font-body:  'DM Sans', system-ui, sans-serif;
+
+  /* Premium Luxury Services Design System Tokens - kept here for components that might still use them */
+  --lux-bg: #0B0B0B;
+  --lux-primary: #FFFFFF;
+  --lux-secondary: #B8B8B8;
+  --lux-accent: #C9A26A;
+  
+  --font-heading: 'Bodoni Moda', 'Cormorant Garamond', serif;
+  --font-body-lux: 'Inter', sans-serif;
+}
+
+.home-page {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+.font-serif   { font-family: var(--font-serif); }
+.font-sans    { font-family: var(--font-sans);  }
+.font-body    { font-family: var(--font-body);  }

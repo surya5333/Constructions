@@ -1,13 +1,12 @@
-import Navbar from '../components/Navbar'
-import ServicesSection from '../components/ServicesSection'
+import { SiteNav } from '../components/projects/SiteNav';
+import ImmersiveServices from '../components/ImmersiveServices';
+import '../styles/services.css';
 
 export default function Services() {
   return (
-    <>
-      <Navbar />
-      <div style={{ paddingTop: '72px', minHeight: '100vh', background: '#fff' }}>
-        <ServicesSection />
-      </div>
-    </>
-  )
+    <div className="services-page" style={{ background: '#0B0B0B' }}>
+      <SiteNav />
+      <ImmersiveServices />
+    </div>
+  );
 }

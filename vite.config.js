@@ -7,5 +7,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.png'],
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
+  },
+  assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.png', '**/*.glb'],
 })

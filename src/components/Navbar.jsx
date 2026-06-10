@@ -64,12 +64,14 @@ export default function Navbar({ theme = 'dark' }) {
         {[
           { name: 'Home', path: '/' },
           { name: 'Services', path: '/services' },
-          { name: 'Process', path: '/#process' },
-          { name: 'Studio', path: '/#studio' },
+          { name: 'Projects', path: '/projects' },
+          { name: 'Studio', path: '/live-project' },
         ].map((item) => (
           <Link
             key={item.name}
             to={item.path}
+            target={item.target}
+            rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 300,
@@ -87,8 +89,8 @@ export default function Navbar({ theme = 'dark' }) {
           </Link>
         ))}
 
-        <a
-          href="#contact"
+        <Link
+          to="/inquiry"
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
@@ -97,14 +99,14 @@ export default function Navbar({ theme = 'dark' }) {
             color: (theme === 'light' && !scrolled) ? '#FFF' : '#111111',
             textDecoration: 'none',
             textTransform: 'uppercase',
-            background: 'transparent',
-            border: `1px solid ${(theme === 'light' && !scrolled) ? 'rgba(255,255,255,0.5)' : '#111111'}`,
-            padding: '0.6rem 1.4rem',
-            transition: 'all 300ms ease',
+            border: (theme === 'light' && !scrolled) ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(26,26,24,0.15)',
+            padding: '0.7rem 1.6rem',
+            borderRadius: '2px',
+            transition: 'all 0.3s ease',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = (theme === 'light' && !scrolled) ? '#FFF' : '#111111'
-            e.currentTarget.style.color = (theme === 'light' && !scrolled) ? '#111111' : '#F5F5F3'
+            e.currentTarget.style.color = (theme === 'light' && !scrolled) ? '#111111' : '#FFF'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = 'transparent'
@@ -112,7 +114,7 @@ export default function Navbar({ theme = 'dark' }) {
           }}
         >
           Inquire
-        </a>
+        </Link>
       </nav>
     </header>
   )

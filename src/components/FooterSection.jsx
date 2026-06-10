@@ -1,5 +1,6 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function FooterSection() {
   const ref = useRef(null)
@@ -112,10 +113,16 @@ export default function FooterSection() {
               Navigation
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
-              {['Work', 'Process', 'Studio', 'Journal', 'Contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+              {[
+                { label: 'Home', to: '/' },
+                { label: 'Services', to: '/services' },
+                { label: 'Projects', to: '/projects' },
+                { label: 'Studio', to: '/live-project' },
+                { label: 'Enquire', to: '/inquiry' }
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: 300,
@@ -130,8 +137,8 @@ export default function FooterSection() {
                   onMouseEnter={e => e.currentTarget.style.color = '#F5F5F3'}
                   onMouseLeave={e => e.currentTarget.style.color = 'rgba(245,245,243,0.55)'}
                 >
-                  {item}
-                </a>
+                  {item.label}
+                </Link>
               ))}
             </div>
           </motion.div>
@@ -151,7 +158,7 @@ export default function FooterSection() {
               textTransform: 'uppercase',
               marginBottom: '1.5rem',
             }}>
-              Contact
+           
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               <div>

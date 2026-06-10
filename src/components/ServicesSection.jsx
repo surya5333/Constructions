@@ -125,89 +125,90 @@ export default function ServicesSection() {
 
     window.addEventListener('resize', handleResize);
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: '+=600%', // 600vh scroll duration
-        pin: true,
-        scrub: 1.2, // Smoother scrubbing
-      }
-    });
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: '+=600%', // 600vh scroll duration
+          pin: true,
+          scrub: 1.2, // Smoother scrubbing
+        }
+      });
 
-    // 1. Canvas Image Sequence Animation
-    tl.to(airpods, {
-      frame: frameCount - 1,
-      snap: 'frame',
-      ease: 'none',
-      onUpdate: render,
-      duration: 1 // Baseline duration for the whole timeline
-    }, 0);
+      // 1. Canvas Image Sequence Animation
+      tl.to(airpods, {
+        frame: frameCount - 1,
+        snap: 'frame',
+        ease: 'none',
+        onUpdate: render,
+        duration: 1 // Baseline duration for the whole timeline
+      }, 0);
 
-    // Helper: Map frame ranges to timeline percentages (0 to 1)
-    const getProgress = (frame) => frame / frameCount;
+      // Helper: Map frame ranges to timeline percentages (0 to 1)
+      const getProgress = (frame) => frame / frameCount;
 
-    // SCENE 01: RESIDENTIAL CONSTRUCTION
-    const scene1Start = 0;
-    const scene1End = getProgress(35);
-    tl.fromTo('.scene-01 .s-num', { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene1Start)
-      .fromTo('.scene-01 .s-title1', { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.05, ease: 'power2.out' }, scene1Start + 0.02)
-      .fromTo('.scene-01 .s-title2', { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.05, ease: 'power2.out' }, scene1Start + 0.04)
-      .fromTo('.scene-01 .s-sub', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene1Start + 0.06)
-      // Parallax out
-      .to('.scene-01', { opacity: 0, y: -100, scale: 0.95, filter: 'blur(10px)', duration: 0.1 }, scene1End);
+      // SCENE 01: RESIDENTIAL CONSTRUCTION
+      const scene1Start = 0;
+      const scene1End = getProgress(35);
+      tl.fromTo('.scene-01 .s-num', { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene1Start)
+        .fromTo('.scene-01 .s-title1', { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.05, ease: 'power2.out' }, scene1Start + 0.02)
+        .fromTo('.scene-01 .s-title2', { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.05, ease: 'power2.out' }, scene1Start + 0.04)
+        .fromTo('.scene-01 .s-sub', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene1Start + 0.06)
+        // Parallax out
+        .to('.scene-01', { opacity: 0, y: -100, scale: 0.95, filter: 'blur(10px)', duration: 0.1 }, scene1End);
 
-    // SCENE 02: COMMERCIAL PROJECTS
-    const scene2Start = getProgress(40);
-    const scene2End = getProgress(75);
-    tl.fromTo('.scene-02 .s-num-bg', { opacity: 0, scale: 0.8 }, { opacity: 0.1, scale: 1, duration: 0.1, ease: 'power2.out' }, scene2Start)
-      .fromTo('.scene-02 .s-title1', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene2Start + 0.02)
-      .fromTo('.scene-02 .s-title2', { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene2Start + 0.02)
-      .fromTo('.scene-02 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene2Start + 0.06)
-      .to('.scene-02', { opacity: 0, y: 50, filter: 'blur(5px)', duration: 0.1 }, scene2End);
+      // SCENE 02: COMMERCIAL PROJECTS
+      const scene2Start = getProgress(40);
+      const scene2End = getProgress(75);
+      tl.fromTo('.scene-02 .s-num-bg', { opacity: 0, scale: 0.8 }, { opacity: 0.1, scale: 1, duration: 0.1, ease: 'power2.out' }, scene2Start)
+        .fromTo('.scene-02 .s-title1', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene2Start + 0.02)
+        .fromTo('.scene-02 .s-title2', { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, scene2Start + 0.02)
+        .fromTo('.scene-02 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene2Start + 0.06)
+        .to('.scene-02', { opacity: 0, y: 50, filter: 'blur(5px)', duration: 0.1 }, scene2End);
 
-    // SCENE 03: INTERIOR EXECUTION
-    const scene3Start = getProgress(80);
-    const scene3End = getProgress(115);
-    tl.fromTo('.scene-03 .s-title-container', { opacity: 0, filter: 'blur(20px)', letterSpacing: '0px' }, { opacity: 1, filter: 'blur(0px)', letterSpacing: '8px', duration: 0.1, ease: 'power1.inOut' }, scene3Start)
-      .fromTo('.scene-03 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene3Start + 0.08)
-      .to('.scene-03', { opacity: 0, x: 100, filter: 'blur(15px)', duration: 0.1 }, scene3End);
+      // SCENE 03: INTERIOR EXECUTION
+      const scene3Start = getProgress(80);
+      const scene3End = getProgress(115);
+      tl.fromTo('.scene-03 .s-title-container', { opacity: 0, filter: 'blur(20px)', letterSpacing: '0px' }, { opacity: 1, filter: 'blur(0px)', letterSpacing: '8px', duration: 0.1, ease: 'power1.inOut' }, scene3Start)
+        .fromTo('.scene-03 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene3Start + 0.08)
+        .to('.scene-03', { opacity: 0, x: 100, filter: 'blur(15px)', duration: 0.1 }, scene3End);
 
-    // SCENE 04: STRUCTURAL ENGINEERING
-    const scene4Start = getProgress(120);
-    const scene4End = getProgress(155);
-    tl.fromTo('.scene-04 .blueprint-grid', { opacity: 0, scale: 0.9 }, { opacity: 0.15, scale: 1, duration: 0.1 }, scene4Start)
-      .fromTo('.scene-04 .s-title1', { opacity: 0, clipPath: 'inset(100% 0 0 0)' }, { opacity: 1, clipPath: 'inset(0% 0 0 0)', duration: 0.05, ease: 'power2.out' }, scene4Start + 0.02)
-      .fromTo('.scene-04 .s-title2', { opacity: 0, clipPath: 'inset(100% 0 0 0)' }, { opacity: 1, clipPath: 'inset(0% 0 0 0)', duration: 0.05, ease: 'power2.out' }, scene4Start + 0.05)
-      .fromTo('.scene-04 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene4Start + 0.08)
-      .to('.scene-04', { opacity: 0, x: -50, duration: 0.1 }, scene4End);
+      // SCENE 04: STRUCTURAL ENGINEERING
+      const scene4Start = getProgress(120);
+      const scene4End = getProgress(155);
+      tl.fromTo('.scene-04 .blueprint-grid', { opacity: 0, scale: 0.9 }, { opacity: 0.15, scale: 1, duration: 0.1 }, scene4Start)
+        .fromTo('.scene-04 .s-title1', { opacity: 0, clipPath: 'inset(100% 0 0 0)' }, { opacity: 1, clipPath: 'inset(0% 0 0 0)', duration: 0.05, ease: 'power2.out' }, scene4Start + 0.02)
+        .fromTo('.scene-04 .s-title2', { opacity: 0, clipPath: 'inset(100% 0 0 0)' }, { opacity: 1, clipPath: 'inset(0% 0 0 0)', duration: 0.05, ease: 'power2.out' }, scene4Start + 0.05)
+        .fromTo('.scene-04 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene4Start + 0.08)
+        .to('.scene-04', { opacity: 0, x: -50, duration: 0.1 }, scene4End);
 
-    // SCENE 05: RENOVATION & RESTORATION
-    const scene5Start = getProgress(160);
-    const scene5End = getProgress(195);
-    tl.fromTo('.scene-05 .s-title1', { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.08, ease: 'power3.out' }, scene5Start)
-      .fromTo('.scene-05 .s-title2', { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.08, ease: 'power3.out' }, scene5Start)
-      .fromTo('.scene-05 .sketch-lines', { opacity: 0 }, { opacity: 0.2, duration: 0.05 }, scene5Start + 0.05)
-      .fromTo('.scene-05 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene5Start + 0.08)
-      .to('.scene-05 .sketch-lines', { opacity: 0, duration: 0.05 }, scene5Start + 0.1) // Briefly appear
-      .to('.scene-05', { opacity: 0, y: 50, filter: 'blur(5px)', duration: 0.1 }, scene5End);
+      // SCENE 05: RENOVATION & RESTORATION
+      const scene5Start = getProgress(160);
+      const scene5End = getProgress(195);
+      tl.fromTo('.scene-05 .s-title1', { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.08, ease: 'power3.out' }, scene5Start)
+        .fromTo('.scene-05 .s-title2', { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.08, ease: 'power3.out' }, scene5Start)
+        .fromTo('.scene-05 .sketch-lines', { opacity: 0 }, { opacity: 0.2, duration: 0.05 }, scene5Start + 0.05)
+        .fromTo('.scene-05 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene5Start + 0.08)
+        .to('.scene-05 .sketch-lines', { opacity: 0, duration: 0.05 }, scene5Start + 0.1) // Briefly appear
+        .to('.scene-05', { opacity: 0, y: 50, filter: 'blur(5px)', duration: 0.1 }, scene5End);
 
-    // SCENE 06: PROJECT MANAGEMENT
-    const scene6Start = getProgress(200);
-    tl.fromTo('.scene-06 .blueprint-lines', { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 0.3, duration: 0.1, transformOrigin: 'center' }, scene6Start)
-      .fromTo('.scene-06 .s-title1', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.05 }, scene6Start + 0.04)
-      .fromTo('.scene-06 .s-title2', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.05 }, scene6Start + 0.08)
-      .fromTo('.scene-06 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene6Start + 0.12);
+      // SCENE 06: PROJECT MANAGEMENT
+      const scene6Start = getProgress(200);
+      tl.fromTo('.scene-06 .blueprint-lines', { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 0.3, duration: 0.1, transformOrigin: 'center' }, scene6Start)
+        .fromTo('.scene-06 .s-title1', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.05 }, scene6Start + 0.04)
+        .fromTo('.scene-06 .s-title2', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.05 }, scene6Start + 0.08)
+        .fromTo('.scene-06 .s-sub', { opacity: 0 }, { opacity: 1, duration: 0.05 }, scene6Start + 0.12);
+    }, containerRef);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      tl.kill();
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      ctx.revert();
     };
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full h-screen bg-[#1a1a18] overflow-hidden">
+    <section ref={containerRef} className="relative w-full h-screen bg-[#1a1a18] overflow-hidden z-50">
       {/* Canvas Background */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
 
