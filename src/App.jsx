@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Analytics } from '@vercel/analytics/react'
 import Home from './pages/Home'
 import Services from './pages/Services'
 import LiveProject from './pages/LiveProject'
@@ -80,6 +81,7 @@ export default function App() {
           <Route path="/inquiry" element={<Inquiry />} />
         </Routes>
       </div>
+      <Analytics />
     </BrowserRouter>
   )
 }
