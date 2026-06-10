@@ -23,8 +23,8 @@ const PROJECT_TYPES = [
 
 const STYLES = [
   { id: "modern", label: "Modern", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=900" },
-  { id: "luxury", label: "Luxury", img: "https://images.unsplash.com/photo-1613490900233-141c5560d75d?auto=format&fit=crop&q=80&w=900" },
-  { id: "minimalist", label: "Minimalist", img: "https://images.unsplash.com/photo-1598928506311-c55dd580e5cb?auto=format&fit=crop&q=80&w=900" },
+  { id: "luxury", label: "Luxury", img: "https://images.unsplash.com/photo-1531971589569-0d9370cbe1e5?q=80&w=2081&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+  { id: "minimalist", label: "Minimalist", img: "https://plus.unsplash.com/premium_photo-1671269941569-7841144ee4e0?q=80&w=693&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
   { id: "contemporary", label: "Contemporary", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=900" },
   { id: "industrial_style", label: "Industrial", img: "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=80&w=900" },
 ];
