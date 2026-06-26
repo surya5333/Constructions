@@ -4,9 +4,11 @@ import HeroSection from '../components/HeroSection'
 import StatsSection from '../components/StatsSection'
 import ServicesSection from '../components/ServicesSection'
 import FooterSection from '../components/FooterSection'
+import useIsMobile from '../lib/useIsMobile'
 import '../styles/home.css'
 
 export default function Home() {
+  const isMobile = useIsMobile()
   return (
     <div className="home-page">
       <Navbar />
@@ -17,7 +19,7 @@ export default function Home() {
       {/* ── SERVICES HEADER ── */}
       <div style={{
         background: '#F5F5F3',
-        padding: '6rem 3.5rem 0',
+        padding: isMobile ? '3rem 1.5rem 0' : '6rem 3.5rem 0',
         maxWidth: '1200px',
         margin: '0 auto',
       }}>

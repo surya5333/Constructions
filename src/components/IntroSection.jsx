@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion'
+import useIsMobile from '../lib/useIsMobile'
 
 export default function IntroSection() {
+  const isMobile = useIsMobile()
+  
   return (
     <section style={{
       width: '100%',
@@ -9,7 +12,7 @@ export default function IntroSection() {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      paddingTop: '100px', // space for navbar
+      paddingTop: isMobile ? '80px' : '100px', // space for navbar
       background: '#F5F5F3',
     }}>
       {/* Title above image */}
@@ -20,13 +23,13 @@ export default function IntroSection() {
         style={{
           fontFamily: "'Cormorant Garamond', serif",
           fontWeight: 400,
-          fontSize: 'clamp(3rem, 6vw, 6rem)',
+          fontSize: isMobile ? 'clamp(2.5rem, 8vw, 3rem)' : 'clamp(3rem, 6vw, 6rem)',
           letterSpacing: '0.1em',
           color: '#111111',
           textTransform: 'uppercase',
           textShadow: '0 1px 2px rgba(0,0,0,0.04)',
           textAlign: 'center',
-          marginBottom: '2rem',
+          marginBottom: isMobile ? '1.5rem' : '2rem',
         }}
       >
         CHV Constructions
@@ -40,10 +43,10 @@ export default function IntroSection() {
         style={{
           width: '100%',
           maxWidth: '1200px',
-          padding: '0 2rem',
+          padding: isMobile ? '0 1rem' : '0 2rem',
           display: 'flex',
           justifyContent: 'center',
-          marginBottom: '4rem',
+          marginBottom: isMobile ? '2rem' : '4rem',
         }}
       >
         <img 

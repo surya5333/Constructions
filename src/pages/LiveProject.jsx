@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { X, Maximize2 } from "lucide-react";
 import modelPath from "../assets/projects/f5cf039b4f4286b58fb4b1fea4ce0795.glb";
 import { SiteNav } from "../components/projects/SiteNav";
+import useIsMobile from "../lib/useIsMobile";
 
 /* ─── STYLES ──────────────────────────────────────────────────────────────── */
 const serif = { fontFamily: "'Cormorant Garamond', Georgia, serif" };
@@ -169,6 +170,7 @@ function WorkOverlay({ p, onClose }) {
 export default function LiveProject() {
   const [workItem, setWorkItem]   = useState(null);
   const [preview, setPreview]     = useState(false);
+  const isMobile = useIsMobile();
 
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
@@ -245,14 +247,15 @@ export default function LiveProject() {
           </motion.div>
 
           {/* ── LEFT PANEL — slides from bottom-left ────────────────────── */}
-          <motion.div
-            style={{
-              position: "absolute", left: "2.5rem", top: "50%", translateY: "-50%",
-              maxWidth: 210, opacity: panelOpacity,
-              x: leftX, y: leftY, rotate: leftRot,
-              pointerEvents: "none",
-            }}
-          >
+          {!isMobile && (
+            <motion.div
+              style={{
+                position: "absolute", left: "2.5rem", top: "50%", translateY: "-50%",
+                maxWidth: 210, opacity: panelOpacity,
+                x: leftX, y: leftY, rotate: leftRot,
+                pointerEvents: "none",
+              }}
+            >
             <p style={{ ...mono, ...label, color: "rgba(255,255,255,0.22)", marginBottom: "2rem" }}>Live · Current Project</p>
             {[
               ["Project",   PROJECT.name],
@@ -268,10 +271,12 @@ export default function LiveProject() {
               </div>
             ))}
           </motion.div>
+          )}
 
           {/* ── RIGHT PANEL — slides from top-right ─────────────────────── */}
-          <motion.div
-            style={{
+          {!isMobile && (
+            <motion.div
+              style={{
               position: "absolute", right: "2.5rem", top: "50%", translateY: "-50%",
               maxWidth: 210, textAlign: "right", opacity: panelOpacity,
               x: rightX, y: rightY, rotate: rightRot,
@@ -293,6 +298,7 @@ export default function LiveProject() {
               </div>
             ))}
           </motion.div>
+          )}
 
           {/* ── PROGRESS — large centered number after panels ────────────── */}
           <motion.div
@@ -350,7 +356,7 @@ export default function LiveProject() {
       </section>
 
       {/* ── NUMBERS BANNER ───────────────────────────────────────────────── */}
-      <section style={{ padding: "7rem 2.5rem", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+      <section style={{ padding: isMobile ? "4rem 1.5rem" : "7rem 2.5rem", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <motion.p
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 2 }}
           style={{ ...serif, fontSize: "clamp(2.5rem, 7vw, 6rem)", fontWeight: 300, letterSpacing: "-0.02em", color: fg, lineHeight: 1, margin: 0 }}
@@ -360,7 +366,7 @@ export default function LiveProject() {
       </section>
 
       {/* ── SELECTED WORK ────────────────────────────────────────────────── */}
-      <section style={{ padding: "0 2.5rem 8rem", maxWidth: 1080, margin: "0 auto" }}>
+      <section style={{ padding: isMobile ? "0 1.5rem 4rem" : "0 2.5rem 8rem", maxWidth: 1080, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "2.5rem", borderBottom: "1px solid rgba(255,255,255,0.07)", paddingBottom: "1.25rem" }}>
           <p style={{ ...mono, ...label, color: dim }}>Selected Work</p>
           <p style={{ ...mono, ...label, color: "rgba(255,255,255,0.12)" }}>{WORK.length} projects</p>

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import useIsMobile from '../lib/useIsMobile';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -56,6 +57,7 @@ export default function ImmersiveServices() {
   const heroRef = useRef(null);
   const heroImgRef = useRef(null);
   const [activeScene, setActiveScene] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -102,8 +104,14 @@ export default function ImmersiveServices() {
           const text = scene.querySelector('.scene-text');
           const img = scene.querySelector('.scene-img');
           // Start positions for incoming
-          gsap.set(text, { x: scene.dataset.layout === 'textLeft' ? -150 : 150 });
-          gsap.set(img, { x: scene.dataset.layout === 'textLeft' ? 150 : -150 });
+          // use inner width as reference for offsets, for mobile use a smaller Y offset instead of X
+          if (window.innerWidth <= 768) {
+            gsap.set(text, { y: 50, x: 0 });
+            gsap.set(img, { y: -50, x: 0 });
+          } else {
+            gsap.set(text, { x: scene.dataset.layout === 'textLeft' ? -150 : 150 });
+            gsap.set(img, { x: scene.dataset.layout === 'textLeft' ? 150 : -150 });
+          }
         }
       });
 
@@ -121,17 +129,19 @@ export default function ImmersiveServices() {
         const inText = nextScene.querySelector('.scene-text');
         const inImg = nextScene.querySelector('.scene-img');
 
+        const isMob = window.innerWidth <= 768;
+
         // Add to timeline
         tl.addLabel(`scene${i}End`)
           // Outgoing
           .to(scene, { opacity: 0, duration: 1 }, `scene${i}End`)
-          .to(outText, { x: scene.dataset.layout === 'textLeft' ? -150 : 150, duration: 1, ease: 'power2.inOut' }, `scene${i}End`)
-          .to(outImg, { x: scene.dataset.layout === 'textLeft' ? 150 : -150, duration: 1, ease: 'power2.inOut' }, `scene${i}End`)
+          .to(outText, isMob ? { y: 50, duration: 1, ease: 'power2.inOut' } : { x: scene.dataset.layout === 'textLeft' ? -150 : 150, duration: 1, ease: 'power2.inOut' }, `scene${i}End`)
+          .to(outImg, isMob ? { y: -50, duration: 1, ease: 'power2.inOut' } : { x: scene.dataset.layout === 'textLeft' ? 150 : -150, duration: 1, ease: 'power2.inOut' }, `scene${i}End`)
           
           // Incoming
           .to(nextScene, { opacity: 1, duration: 1 }, `scene${i}End+=0.5`)
-          .to(inText, { x: 0, duration: 1, ease: 'power2.out' }, `scene${i}End+=0.5`)
-          .to(inImg, { x: 0, duration: 1, ease: 'power2.out' }, `scene${i}End+=0.5`)
+          .to(inText, isMob ? { y: 0, duration: 1, ease: 'power2.out' } : { x: 0, duration: 1, ease: 'power2.out' }, `scene${i}End+=0.5`)
+          .to(inImg, isMob ? { y: 0, duration: 1, ease: 'power2.out' } : { x: 0, duration: 1, ease: 'power2.out' }, `scene${i}End+=0.5`)
           
           // Add a pause gap
           .to({}, { duration: 0.5 });
@@ -161,18 +171,18 @@ export default function ImmersiveServices() {
     <div ref={containerRef} className="bg-[var(--lux-bg)] min-h-screen text-[var(--lux-primary)] font-[var(--font-body-lux)] selection:bg-[var(--lux-accent)] selection:text-[var(--lux-bg)]">
       
       {/* SECTION 1: HERO */}
-      <section ref={heroRef} className="relative w-full h-screen overflow-hidden flex items-center justify-between px-6 md:px-12 lg:px-24">
+      <section ref={heroRef} className={`relative w-full h-screen overflow-hidden flex ${isMobile ? 'flex-col justify-center' : 'items-center justify-between'} px-6 md:px-12 lg:px-24`}>
         {/* Background Image (Right aligned visually) */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-          <div className="absolute right-0 top-0 w-full md:w-[60%] h-[120%] -top-[10%]">
+          <div className={`absolute ${isMobile ? 'inset-0' : 'right-0 top-0 w-full md:w-[60%] h-[120%] -top-[10%]'}`}>
             <div 
               ref={heroImgRef}
               className="w-full h-full bg-cover bg-center opacity-60"
               style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=2000&q=80)' }}
             />
             {/* Atmospheric overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--lux-bg)] via-[var(--lux-bg)]/80 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--lux-bg)] to-transparent opacity-80"></div>
+            <div className={`absolute inset-0 bg-gradient-to-${isMobile ? 't' : 'r'} from-[var(--lux-bg)] via-[var(--lux-bg)]/80 to-transparent`}></div>
+            {!isMobile && <div className="absolute inset-0 bg-gradient-to-t from-[var(--lux-bg)] to-transparent opacity-80"></div>}
           </div>
         </div>
 
@@ -248,12 +258,12 @@ export default function ImmersiveServices() {
         </div>
 
         {/* The 6 Scenes */}
-        <div className="absolute inset-0 w-full h-full px-24 md:px-32 lg:px-48 flex items-center justify-center">
+        <div className={`absolute inset-0 w-full h-full ${isMobile ? 'px-4' : 'px-24 md:px-32 lg:px-48'} flex items-center justify-center`}>
           {servicesData.map((service, index) => (
             <div 
               key={service.id} 
               data-layout={service.layout}
-              className="immersive-scene absolute inset-0 w-full h-full flex flex-col md:flex-row items-center justify-between px-24"
+              className={`immersive-scene absolute inset-0 w-full h-full flex ${isMobile ? 'flex-col justify-center' : 'flex-col md:flex-row items-center justify-between px-24'}`}
               style={{ zIndex: servicesData.length - index }}
             >
               {/* Architectural Grid Overlay for Technical Atmosphere (Scene 04) */}
@@ -266,20 +276,20 @@ export default function ImmersiveServices() {
                 {service.id}
               </div>
 
-              {service.layout === 'textLeft' ? (
+              {service.layout === 'textLeft' || isMobile ? (
                 <>
-                  <div className="scene-text w-full md:w-[45%] flex flex-col relative z-10 pl-12">
+                  <div className={`scene-text w-full md:w-[45%] flex flex-col relative z-10 ${isMobile ? 'px-4 mb-8 text-center items-center' : 'pl-12'}`}>
                     <span className="text-[var(--lux-accent)] font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
                       {service.id} // {service.title.replace('\n', ' ')}
                     </span>
-                    <h2 className="font-[var(--font-heading)] text-5xl md:text-7xl leading-[1.1] mb-8 whitespace-pre-line">
+                    <h2 className={`font-[var(--font-heading)] ${isMobile ? 'text-4xl' : 'text-5xl md:text-7xl'} leading-[1.1] mb-8 whitespace-pre-line`}>
                       {service.title}
                     </h2>
-                    <p className="text-[var(--lux-secondary)] text-lg font-light leading-relaxed max-w-md">
+                    <p className={`text-[var(--lux-secondary)] ${isMobile ? 'text-base' : 'text-lg'} font-light leading-relaxed max-w-md`}>
                       {service.desc}
                     </p>
                   </div>
-                  <div className="scene-img w-full md:w-[45%] h-[60vh] relative z-10 border border-[var(--lux-secondary)]/20 p-2">
+                  <div className={`scene-img w-full md:w-[45%] ${isMobile ? 'h-[40vh] mt-4 px-4' : 'h-[60vh]'} relative z-10 border border-[var(--lux-secondary)]/20 p-2`}>
                     <img src={service.img} alt={service.title} className="w-full h-full object-cover" style={{ opacity: 1 }} />
                   </div>
                 </>

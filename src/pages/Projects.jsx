@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import { SiteNav } from "../components/projects/SiteNav";
 import { LiveModel, BeforeAfter, ProjectStoryModal } from "../components/projects/ProjectUI";
+import useIsMobile from "../lib/useIsMobile";
 import "../styles/projects.css";
 
 import heroLive     from "../assets/projects/hero-live.jpg";
@@ -101,6 +102,7 @@ const fadeIn  = { hidden: { opacity: 0 },        show: { opacity: 1 } };
 export default function Projects() {
   const [isStoryOpen, setIsStoryOpen] = useState(false);
   const [active, setActive]           = useState(0);
+  const isMobile                      = useIsMobile();
 
   useEffect(() => {
     const t = setInterval(() => setActive(p => (p + 1) % TESTIMONIALS.length), 5000);
@@ -138,7 +140,7 @@ export default function Projects() {
             <rect width="100%" height="100%" fill="url(#bp)" />
           </svg>
 
-          <div style={{ position: "relative", maxWidth: 1320, margin: "0 auto", padding: "8rem 2.5rem 3rem", display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: "3rem", alignItems: "center", width: "100%" }}>
+          <div style={{ position: "relative", maxWidth: 1320, margin: "0 auto", padding: isMobile ? "6rem 1.5rem 3rem" : "8rem 2.5rem 3rem", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.1fr 1fr", gap: "3rem", alignItems: "center", width: "100%" }}>
             {/* left */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ duration: 0.9, delay: 0.2 }}>
               <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.625rem", letterSpacing: "0.35em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "1.5rem" }}>
@@ -261,7 +263,7 @@ export default function Projects() {
               </p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)" }}>
               {ONGOING.map((c, i) => (
                 <motion.article key={c.name} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: i * 0.07 }}
                   style={{ position: "relative", aspectRatio: "3/4", overflow: "hidden", background: "#000" }}>
@@ -306,7 +308,7 @@ export default function Projects() {
 
             {COMPLETED.map((proj, i) => (
               <motion.div key={proj.name} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ duration: 0.8 }}
-                style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid var(--border)", marginBottom: "1px", direction: i % 2 !== 0 ? "rtl" : "ltr" }}>
+                style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", border: "1px solid var(--border)", marginBottom: "1px", direction: (i % 2 !== 0 && !isMobile) ? "rtl" : "ltr" }}>
                 <div style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden", direction: "ltr" }}>
                   <img src={proj.img} alt={proj.name} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.7s" }}
                     onMouseEnter={e => e.currentTarget.style.transform = "scale(1.04)"}
@@ -345,7 +347,7 @@ export default function Projects() {
             ))}
 
             {/* thumbnail strip */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)", marginTop: 1 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)", marginTop: 1 }}>
               {[p1, p2, p3, p4].map((img, i) => (
                 <motion.div key={i} variants={fadeIn} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                   style={{ aspectRatio: "4/3", overflow: "hidden", cursor: "pointer" }}>
@@ -361,7 +363,7 @@ export default function Projects() {
 
         {/* ══ 04 · BEFORE → AFTER ════════════════════════════════════════════ */}
         <section style={{ background: "lab(95.3645% .915945 2.88142)", padding: "4rem 0", color: "#000" }}>
-          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: "1fr 2.2fr", gap: "4rem", alignItems: "start" }}>
+          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 2.2fr", gap: "4rem", alignItems: "start" }}>
             <div>
               <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.625rem", letterSpacing: "0.4em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "0.75rem" }}>04 · Transformation</p>
               <h2 style={{ fontFamily: "Fraunces, serif", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", lineHeight: 1.05, textTransform: "uppercase", margin: 0, color: "#000" }}>
@@ -409,7 +411,7 @@ export default function Projects() {
 
         {/* ══ 05 · PROCESS ═══════════════════════════════════════════════════ */}
         <section style={{ background: "var(--background)", padding: "6rem 0" }}>
-          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: "1fr 2.2fr", gap: "4rem", alignItems: "start" }}>
+          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 2.2fr", gap: "4rem", alignItems: "start" }}>
             <div>
               <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.625rem", letterSpacing: "0.4em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "0.75rem" }}>05 · Project Story</p>
               <h2 style={{ fontFamily: "Fraunces, serif", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", lineHeight: 1.05, textTransform: "uppercase", margin: 0 }}>
@@ -420,7 +422,7 @@ export default function Projects() {
               </p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)" }}>
               {STEPS.map((s, i) => (
                 <motion.div key={s.n} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                   style={{ padding: "2rem", background: "var(--card)", transition: "background 0.3s", cursor: "default" }}
@@ -440,7 +442,7 @@ export default function Projects() {
 
         {/* ══ 06 · IMPACT METRICS ════════════════════════════════════════════ */}
         <section style={{ background: "lab(95.3645% .915945 2.88142)", padding: "6rem 0", color: "#000" }}>
-          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: "1fr 2.2fr", gap: "4rem", alignItems: "center" }}>
+          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 2.2fr", gap: "4rem", alignItems: "center" }}>
             <div>
               <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.625rem", letterSpacing: "0.4em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "0.75rem" }}>06 · Our Impact</p>
               <h2 style={{ fontFamily: "Fraunces, serif", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", lineHeight: 1.05, textTransform: "uppercase", margin: 0, color: "#000" }}>
@@ -450,7 +452,7 @@ export default function Projects() {
                 Every metric is a testament to our commitment to precision, delivery, and client satisfaction.
               </p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 1, background: "color-mix(in oklch, var(--border) 20%, transparent)" }}>
               {STATS.map((s, i) => (
                 <motion.div key={s.l} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2.5rem 1rem", background: "var(--card)", textAlign: "center", transition: "background 0.3s" }}
@@ -468,7 +470,7 @@ export default function Projects() {
 
         {/* ══ 07 · TESTIMONIALS ══════════════════════════════════════════════ */}
         <section style={{ background: "var(--background)", padding: "6rem 0" }}>
-          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: "1fr 2fr", gap: "4rem", alignItems: "center" }}>
+          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 2.5rem", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr", gap: "4rem", alignItems: "center" }}>
             <div>
               <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.625rem", letterSpacing: "0.4em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "0.75rem" }}>07 · Client Voices</p>
               <h2 style={{ fontFamily: "Fraunces, serif", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", lineHeight: 1.05, textTransform: "uppercase", margin: 0 }}>

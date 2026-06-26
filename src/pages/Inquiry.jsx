@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import FooterSection from "../components/FooterSection";
+import useIsMobile from "../lib/useIsMobile";
 
 /* ─────────────────────────── DATA ─────────────────────────── */
 
@@ -174,6 +175,7 @@ export default function Inquiry() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const isMobile = useIsMobile();
 
   const heroRef = useRef(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -437,7 +439,7 @@ export default function Inquiry() {
           </motion.div>
 
           {/* Two-col layout */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr min(440px, 100%)", gap: "5rem", alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr min(440px, 100%)", gap: isMobile ? "3rem" : "5rem", alignItems: "start" }}>
             {/* FORM STEPS */}
             <div style={{ minHeight: "520px" }}>
               <AnimatePresence mode="wait">
@@ -656,7 +658,7 @@ export default function Inquiry() {
               </div>
 
               {/* Mini stats */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1px", background: "rgba(255,255,255,0.04)", marginTop: "1px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1px", background: "rgba(255,255,255,0.04)", marginTop: "1px" }}>
                 {[{ icon: Award, v: "25+", l: "Projects" }, { icon: Sparkles, v: "98%", l: "Satisfaction" }].map((s, i) => (
                   <div key={i} style={{ background: "#0A0A0A", padding: "1.5rem", textAlign: "center" }}>
                     <s.icon size={16} color="#C89B5A" strokeWidth={1} style={{ marginBottom: "0.75rem" }} />
@@ -746,7 +748,7 @@ export default function Inquiry() {
       ══════════════════════════════════════════ */}
       <section style={{ padding: "8rem 2rem", background: "#050505", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "6rem", alignItems: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr", gap: isMobile ? "3rem" : "6rem", alignItems: "center" }}>
             <motion.div
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             >

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import useIsMobile from '../lib/useIsMobile';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,6 +12,7 @@ export default function ServicesSection() {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const textContainersRef = useRef([]);
+  const isMobile = useIsMobile();
 
   // Set up texts array
   const scenes = [
@@ -19,7 +21,7 @@ export default function ServicesSection() {
       title1: 'RESIDENTIAL',
       title2: 'CONSTRUCTION',
       subtitle: 'Crafting bespoke homes with precision and passion.',
-      style: { top: '15%', left: '5%' } // Upper left
+      style: { top: isMobile ? '10%' : '15%', left: '5%' } // Upper left
     },
     {
       id: '02',
@@ -216,8 +218,8 @@ export default function ServicesSection() {
       
       {/* SCENE 01: RESIDENTIAL */}
       <div className="scene-01 absolute text-white flex flex-col z-10" style={scenes[0].style}>
-        <span className="s-num font-['Cormorant_Garamond'] text-2xl text-[#d4c3a3] mb-4">01 / 06</span>
-        <h2 className="text-5xl md:text-7xl font-['Bodoni_Moda',serif] uppercase leading-tight mb-2">
+        <span className="s-num font-['Cormorant_Garamond'] text-xl md:text-2xl text-[#d4c3a3] mb-4">01 / 06</span>
+        <h2 className="text-4xl md:text-7xl font-['Bodoni_Moda',serif] uppercase leading-tight mb-2">
           <div className="s-title1">RESIDENTIAL</div>
           <div className="s-title2">CONSTRUCTION</div>
         </h2>
@@ -228,11 +230,11 @@ export default function ServicesSection() {
 
       {/* SCENE 02: COMMERCIAL */}
       <div className="scene-02 absolute text-white flex flex-col z-10 w-full" style={{...scenes[1].style, width: '90%'}}>
-        <div className="s-num-bg absolute -left-10 -bottom-20 text-[20rem] font-['Cormorant_Garamond'] leading-none text-[#d4c3a3] opacity-0 pointer-events-none select-none z-0">
+        <div className="s-num-bg absolute -left-5 md:-left-10 -bottom-10 md:-bottom-20 text-[10rem] md:text-[20rem] font-['Cormorant_Garamond'] leading-none text-[#d4c3a3] opacity-0 pointer-events-none select-none z-0">
           02
         </div>
         <div className="relative z-10">
-          <h2 className="text-6xl md:text-8xl font-['Helvetica_Neue','Neue_Montreal',sans-serif] font-bold uppercase tracking-tighter mb-2 overflow-hidden">
+          <h2 className="text-4xl md:text-8xl font-['Helvetica_Neue','Neue_Montreal',sans-serif] font-bold uppercase tracking-tighter mb-2 overflow-hidden">
             <div className="s-title1">COMMERCIAL</div>
             <div className="s-title2">PROJECTS</div>
           </h2>
@@ -244,7 +246,7 @@ export default function ServicesSection() {
 
       {/* SCENE 03: INTERIOR */}
       <div className="scene-03 absolute text-white flex flex-col items-end z-10" style={scenes[2].style}>
-        <h2 className="s-title-container text-4xl md:text-6xl font-['Canela','Cormorant_Garamond',serif] uppercase text-right leading-snug">
+        <h2 className="s-title-container text-3xl md:text-6xl font-['Canela','Cormorant_Garamond',serif] uppercase text-right leading-snug">
           <div className="s-title1">INTERIOR</div>
           <div className="s-title2">EXECUTION</div>
         </h2>
@@ -254,10 +256,10 @@ export default function ServicesSection() {
       </div>
 
       {/* SCENE 04: STRUCTURAL */}
-      <div className="scene-04 absolute text-white z-10 pointer-events-none" style={{ left: '4rem', top: '50%' }}>
+      <div className="scene-04 absolute text-white z-10 pointer-events-none" style={{ left: isMobile ? '2rem' : '4rem', top: '50%' }}>
         <div className="flex flex-col items-center justify-center whitespace-nowrap" style={{ transform: 'translate(-50%, -50%) rotate(-90deg)' }}>
           <div className="blueprint-grid absolute inset-0 border border-[#d4c3a3] opacity-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#d4c3a3 1px, transparent 1px), linear-gradient(90deg, #d4c3a3 1px, transparent 1px)', backgroundSize: '20px 20px', margin: '-2rem' }}></div>
-          <h2 className="text-4xl md:text-5xl font-['Inter',sans-serif] uppercase font-bold tracking-widest flex flex-col items-center gap-2">
+          <h2 className="text-3xl md:text-5xl font-['Inter',sans-serif] uppercase font-bold tracking-widest flex flex-col items-center gap-2">
             <div className="s-title1">{scenes[3].title1}</div>
             <div className="s-title2 text-[#d4c3a3]">{scenes[3].title2}</div>
           </h2>
@@ -270,7 +272,7 @@ export default function ServicesSection() {
       {/* SCENE 05: RENOVATION */}
       <div className="scene-05 absolute text-white flex flex-col z-10" style={scenes[4].style}>
         <div className="sketch-lines absolute inset-0 opacity-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGw0MCA0ME00MCAwbC00MCA0MCIgc3Ryb2tlPSIjZDRjM2EzIiBzdHJva2Utd2lkdGg9IjAuNSIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+')] pointer-events-none"></div>
-        <h2 className="text-5xl md:text-7xl font-['Cormorant_Garamond',serif] uppercase italic tracking-wide flex justify-end gap-3">
+        <h2 className="text-3xl md:text-7xl font-['Cormorant_Garamond',serif] uppercase italic tracking-wide flex justify-end gap-3 flex-wrap">
           <div className="s-title1">{scenes[4].title1}</div>
           <div className="s-title2">{scenes[4].title2}</div>
         </h2>
@@ -283,8 +285,8 @@ export default function ServicesSection() {
       <div className="scene-06 absolute text-white flex flex-col items-center z-10 w-full" style={scenes[5].style}>
         <div className="blueprint-lines absolute top-1/2 left-0 w-full h-[1px] bg-[#d4c3a3] opacity-0 pointer-events-none"></div>
         <div className="blueprint-lines absolute top-0 left-1/2 w-[1px] h-full bg-[#d4c3a3] opacity-0 pointer-events-none"></div>
-        <div className="relative">
-          <h2 className="text-4xl md:text-6xl font-['Inter',sans-serif] font-medium uppercase tracking-[0.2em] mb-4 text-center">
+        <div className="relative w-full px-4">
+          <h2 className="text-3xl md:text-6xl font-['Inter',sans-serif] font-medium uppercase tracking-[0.2em] mb-4 text-center">
             <div className="s-title1">{scenes[5].title1}</div>
             <div className="s-title2 text-[#d4c3a3]">{scenes[5].title2}</div>
           </h2>

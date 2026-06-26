@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import useIsMobile from '../lib/useIsMobile'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -142,6 +143,8 @@ export default function HeroSection() {
   const [allLoaded, setAllLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [hasEntered, setHasEntered] = useState(false)
+  
+  const isMobile = useIsMobile()
 
   // ── 1. Preload all frames ──────────────────────────────────────────────
   useEffect(() => {
@@ -403,7 +406,7 @@ export default function HeroSection() {
       {/* ── Scroll Container (pinned height) ──────────────────────── */}
       <section
         ref={sectionRef}
-        style={{ height: '700vh', position: 'relative' }}
+        style={{ height: isMobile ? '400vh' : '700vh', position: 'relative' }}
       >
         {/* ── Sticky Viewport ───────────────────────────────────────── */}
         <div
@@ -415,26 +418,28 @@ export default function HeroSection() {
             width: '100%',
             background: '#F5F5F3',
             display: 'grid',
-            gridTemplateColumns: '180px 1fr 240px',
+            gridTemplateColumns: isMobile ? '1fr' : '180px 1fr 240px',
+            gridTemplateRows: isMobile ? '1fr auto' : '1fr',
             overflow: 'hidden',
           }}
         >
 
           {/* ── LEFT — Vertical Timeline ─────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, x: -12 }}
-            animate={hasEntered ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 1.0, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.3 }}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'flex-start',
-              padding: '0 0 0 2.8rem',
-              gap: '0',
-              position: 'relative',
-            }}
-          >
+          {!isMobile && (
+            <motion.div
+              initial={{ opacity: 0, x: -12 }}
+              animate={hasEntered ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 1.0, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.3 }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+                padding: '0 0 0 2.8rem',
+                gap: '0',
+                position: 'relative',
+              }}
+            >
             {/* Vertical dotted line */}
             <div style={{
               position: 'absolute',
@@ -528,6 +533,7 @@ export default function HeroSection() {
               </span>
             </div>
           </motion.div>
+          )}
 
           {/* ── CENTER — Canvas ──────────────────────────────────── */}
           <motion.div
@@ -539,6 +545,7 @@ export default function HeroSection() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              gridRow: isMobile ? 1 : 'auto',
             }}
           >
             <canvas
@@ -633,9 +640,13 @@ export default function HeroSection() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
-              padding: '0 3rem 0 1.5rem',
+              justifyContent: isMobile ? 'flex-start' : 'center',
+              padding: isMobile ? '0 1.5rem 2rem 1.5rem' : '0 3rem 0 1.5rem',
               gap: '0',
+              gridRow: isMobile ? 2 : 'auto',
+              background: isMobile ? 'linear-gradient(to top, #F5F5F3 80%, transparent)' : 'none',
+              zIndex: 10,
+              marginTop: isMobile ? '-2rem' : '0'
             }}
           >
 

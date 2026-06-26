@@ -62,6 +62,12 @@
   padding: 5rem 0; /* Default padding for sections */
 }
 
+@media (max-width: 768px) {
+  .project-theme section {
+    padding: 3rem 0;
+  }
+}
+
 .project-theme * {
   box-sizing: border-box;
   border-color: var(--border);

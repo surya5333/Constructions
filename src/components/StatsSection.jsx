@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import useIsMobile from '../lib/useIsMobile'
 
 const STATS = [
   { value: 120, suffix: '+', label: 'Projects Completed' },
@@ -38,6 +39,7 @@ function AnimatedNumber({ target, suffix, inView }) {
 export default function StatsSection() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
+  const isMobile = useIsMobile()
 
   return (
     <section
@@ -45,14 +47,14 @@ export default function StatsSection() {
       id="work"
       style={{
         background: '#F5F5F3',
-        padding: '7rem 0',
+        padding: isMobile ? '4rem 0' : '7rem 0',
         position: 'relative',
       }}
     >
       {/* Top divider */}
       <div style={{
         position: 'absolute',
-        top: 0, left: '3.5rem', right: '3.5rem',
+        top: 0, left: isMobile ? '1.5rem' : '3.5rem', right: isMobile ? '1.5rem' : '3.5rem',
         height: '1px',
         background: 'rgba(26,26,24,0.1)',
       }} />
@@ -60,7 +62,7 @@ export default function StatsSection() {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '0 3.5rem',
+        padding: isMobile ? '0 1.5rem' : '0 3.5rem',
       }}>
 
         {/* Section label */}
@@ -91,8 +93,8 @@ export default function StatsSection() {
         {/* Stats grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '0',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+          gap: isMobile ? '2.5rem 1rem' : '0',
         }}>
           {STATS.map((stat, i) => (
             <motion.div
@@ -106,9 +108,9 @@ export default function StatsSection() {
               }}
               style={{
                 padding: '0 3rem 0 0',
-                borderRight: i < STATS.length - 1 ? '1px solid rgba(26,26,24,0.1)' : 'none',
-                paddingRight: i < STATS.length - 1 ? '3rem' : '0',
-                paddingLeft: i > 0 ? '3rem' : '0',
+                borderRight: (!isMobile && i < STATS.length - 1) ? '1px solid rgba(26,26,24,0.1)' : 'none',
+                paddingRight: (!isMobile && i < STATS.length - 1) ? '3rem' : '0',
+                paddingLeft: (!isMobile && i > 0) ? '3rem' : '0',
               }}
             >
               {/* Number */}
@@ -156,7 +158,7 @@ export default function StatsSection() {
       {/* Bottom divider */}
       <div style={{
         position: 'absolute',
-        bottom: 0, left: '3.5rem', right: '3.5rem',
+        bottom: 0, left: isMobile ? '1.5rem' : '3.5rem', right: isMobile ? '1.5rem' : '3.5rem',
         height: '1px',
         background: 'rgba(26,26,24,0.1)',
       }} />

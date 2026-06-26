@@ -1,10 +1,12 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import useIsMobile from '../lib/useIsMobile'
 
 export default function FooterSection() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
+  const isMobile = useIsMobile()
 
   return (
     <footer
@@ -13,7 +15,7 @@ export default function FooterSection() {
       style={{
         background: '#1A1A18',
         color: '#F5F5F3',
-        padding: '7rem 0 4rem',
+        padding: isMobile ? '4rem 0 2rem' : '7rem 0 4rem',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -48,9 +50,9 @@ export default function FooterSection() {
         {/* Top row */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '4rem',
-          marginBottom: '6rem',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+          gap: isMobile ? '3rem' : '4rem',
+          marginBottom: isMobile ? '4rem' : '6rem',
         }}>
 
           {/* Brand */}
@@ -226,8 +228,10 @@ export default function FooterSection() {
         {/* Bottom row */}
         <div style={{
           display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: isMobile ? 'flex-start' : 'center',
+          gap: isMobile ? '1rem' : '0',
         }}>
           <span style={{
             fontFamily: "'Inter', sans-serif",
